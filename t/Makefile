@@ -7,7 +7,7 @@ clean:
 
 test: $(MODULES)
 
-./$(MODULES): $(ERL_OBJECTS) clean_db
+./$(MODULES): $(ERL_OBJECTS)
 	@rm -rf $(ERL_DB)
 	@echo "#Running tests for $@"
 	@$(ERL_RUN) $@ $(ERL_STOP)
