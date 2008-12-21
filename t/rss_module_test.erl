@@ -6,6 +6,8 @@
 -import(etap_can, [can_ok/3, loaded_ok/2]).
 
 start() ->
-    plan(1),
+    plan(3),
     loaded_ok(rss, "the rss module has loaded ok"),
+    can_ok(rss, process_rss, 1),
+    can_ok(rss, parse_rss_channels, 1),
     etap:end_tests().
