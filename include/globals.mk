@@ -19,8 +19,6 @@ endif
 ERL := erl
 ERLC := $(ERL)c 
 
-ERL_DB := Mnesia.nonode\@nohost
-
 #erlang source files
 ERL_SOURCES := $(wildcard *.erl)
 ERL_BEHAVIOUR_SOURCES := $(wildcard behaviour/*.erl)
@@ -58,7 +56,3 @@ $(EBIN_DIR)/%.$(EMULATOR): %.erl
 	$(ERLC) $(ERLC_FLAGS) -o $(EBIN_DIR) $<
 
 default: all
-
-clean_db:
-	rm -rf ./$(ERL_DB) 
-

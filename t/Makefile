@@ -2,7 +2,7 @@ include ../include/globals.mk
 
 all: $(ERL_OBJECTS)
 
-clean: clean_db
+clean:
 	rm -f $(CLEAN_TARGETS)
 
 test: $(MODULES)

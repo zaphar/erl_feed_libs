@@ -19,7 +19,6 @@ doc:
 	@(cd src; $(MAKE) doc)
 
 clean:
-	rm -rf $(ERL_DB)
 	@(cd src; $(MAKE) clean)
 	@(cd t; $(MAKE) clean)
 	@(cd support; $(MAKE) clean)
