@@ -8,25 +8,29 @@
 -include("rss.hrl").
 
 start() ->
-    plan(3),
+    plan(15),
     loaded_ok(rss, "the rss module has loaded ok"),
     can_ok(rss, process_rss, 1),
     can_ok(rss, process_rss, 2),
-    test_channels(),
-    test_items(),
+    test_channels(2),
+    test_items(2),
+    test_channels(0.92),
+    test_items(0.92),
+    test_channels(0.91),
+    test_items(0.91),
     etap:end_tests().
 
-test_channels() ->
-    C = rss:process_rss(rss_fixture(2), channels),
+test_channels(Vsn) ->
+    etap:diag(io_lib:format("Testing channel retrieval for version: ~w", [Vsn])),
+    C = rss:process_rss(rss_fixture(Vsn), channels),
     ok(is_list(C), "we got back a list"),
-    is(length(C), 1, "there is only one element in the list"),
-    [I | T] = C,
-    ok(is_record(I, channel), "the element is an channel").
+    ok(lists:all(fun(Item) -> is_record(Item, channel) end, C),
+        "all the items were channel records").
 
-test_items() ->
-    I = rss:process_rss(rss_fixture(2), items),
+test_items(Vsn) ->
+    etap:diag(io_lib:format("Testing items retrieval for version: ~w", [Vsn])),
+    I = rss:process_rss(rss_fixture(Vsn), items),
     ok(is_list(I), "we got back another list"),
-    is(length(I), 4, "there were 4 elements in the list"),
     ok(lists:all(fun(Item) -> is_record(Item, rssitem) end, I),
         "all the items were rssitem records").
 

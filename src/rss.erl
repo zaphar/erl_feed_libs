@@ -46,7 +46,8 @@ parse_rss_item(I) when is_record(I, xmlElement) ->
   Title = xpath_text_content("//title", I), 
   Desc = xpath_text_content("//description", I), 
   Date = xpath_text_content("//pubDate", I),
-  #rssitem{uri=Link, title=Title, desc=Desc, pub_date=Date}.
+  Guid = xpath_text_content("//guid", I),
+  #rssitem{uri=Link, title=Title, desc=Desc, pub_date=Date, guid=Guid}.
 
 %% @private
 xpath_first_item(Str, R) when is_record(R, xmlElement) ->
