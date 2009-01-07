@@ -14,6 +14,7 @@ start() ->
     can_ok(rss, process_rss, 2),
     test_channels(2),
     test_items(2),
+    test_items_optional(2),
     test_channels(0.92),
     test_items(0.92),
     test_channels(0.91),
@@ -33,6 +34,18 @@ test_items(Vsn) ->
     ok(is_list(I), "we got back another list"),
     ok(lists:all(fun(Item) -> is_record(Item, rssitem) end, I),
         "all the items were rssitem records").
+
+test_items_optional(2) ->
+    etap:diag("Testing items with Optional elements"),
+    I = rss:process_rss(rss_fixture(2), items),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+            is_list(Item#rssitem.category) end,
+         I),
+        "We had a foo@bar.com author"),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+            Item#rssitem.author == "foo@bar.com" end,
+         I),
+        "We had a foo@bar.com author").
 
 rss_fixture(Vsn) ->
     case Vsn of
