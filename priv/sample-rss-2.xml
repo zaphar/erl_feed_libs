@@ -29,6 +29,7 @@
          <description>Before man travels to Mars, NASA hopes to design new engines that will let us fly through the Solar System more quickly.  The proposed VASIMR engine would do that.</description>
          <pubDate>Tue, 27 May 2003 08:37:32 GMT</pubDate>
          <guid>http://liftoff.msfc.nasa.gov/2003/05/27.html#item571</guid>
+         <author>foo@bar.com</author>
       </item>
       <item>
          <title>Astronauts' Dirty Laundry</title>
@@ -36,6 +37,8 @@
          <description>Compared to earlier spacecraft, the International Space Station has many luxuries, but laundry facilities are not one of them.  Instead, astronauts have other options.</description>
          <pubDate>Tue, 20 May 2003 08:56:02 GMT</pubDate>
          <guid>http://liftoff.msfc.nasa.gov/2003/05/20.html#item570</guid>
+         <category>baz</category>
+         <category domain='bar.com'>foobar</category>
       </item>
    </channel>
 </rss>
