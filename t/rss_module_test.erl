@@ -8,7 +8,7 @@
 -include("rss.hrl").
 
 start() ->
-    plan(15),
+    plan(17),
     loaded_ok(rss, "the rss module has loaded ok"),
     can_ok(rss, process_rss, 1),
     can_ok(rss, process_rss, 2),
@@ -41,7 +41,7 @@ test_items_optional(2) ->
     ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
             is_list(Item#rssitem.category) end,
          I),
-        "We had a foo@bar.com author"),
+        "The category field is populated"),
     ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
             Item#rssitem.author == "foo@bar.com" end,
          I),
