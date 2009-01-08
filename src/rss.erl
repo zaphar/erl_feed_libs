@@ -48,8 +48,33 @@ parse_rss_item(I) when is_record(I, xmlElement) ->
   Date = xpath_text_content("//pubDate", I),
   Guid = xpath_text_content("//guid", I),
   Author = xpath_text_content("//author", I),
+  Category = xpath_content_list("//category", I),
+ 
+  %% fun to turn xmlElments into category records
+  ToCatRecord = fun(C) ->
+    Value = text_content(C#xmlElement.content),
+    Attrs = C#xmlElement.attributes,
+    Domains = lists:filter(
+        fun(A) ->
+            %%io:format("Attribute name is ~w~n", [A#xmlAttribute.name]),
+            A#xmlAttribute.name == domain 
+         end,
+    Attrs),
+    Domain = case Domains of
+        [] ->
+            "";
+        [H | _] ->
+            H#xmlAttribute.value
+    end,
+    %%io:format("Domain is ~w~n", [Domain]),
+    #rsscategory{value=Value, domain=Domain}
+  end,
+  
+  CatList = [ToCatRecord(C) || C <- Category ],
+
   #rssitem{uri=Link, title=Title, desc=Desc, author=Author,
-           pub_date=Date, guid=Guid}.
+           pub_date=Date, guid=Guid,
+           category=CatList}.
 
 %% @private
 xpath_first_item(Str, R) when is_record(R, xmlElement) ->
@@ -60,15 +85,26 @@ xpath_first_item(Str, R) when is_record(R, xmlElement) ->
     #xmlElement{}
   end.
 
+text_content(R) ->
+  lists:flatten([T#xmlText.value || T <- R, is_record(T, xmlText)]).
+    
 %% @private
 xpath_text_content(Str, R) when is_record(R, xmlElement) ->
-  Text = xpath_content(Str, R),
-  lists:flatten([T#xmlText.value || T <- Text]).
+  text_content(xpath_content(Str, R)).
 
 %% @private
 xpath_content(Str, R) when is_record(R, xmlElement) ->
   Node  = xpath_first_item(Str, R),
   Node#xmlElement.content.
+
+%% @private
+xpath_content_list(Str, R) when is_record(R, xmlElement) ->
+    case xmerl_xpath:string(Str, R) of
+        List when is_list(List) ->
+            List;
+        [] ->
+            [#xmlElement{}]
+    end.
 
 %% @private
 xml_doc(S) when is_list(S) ->

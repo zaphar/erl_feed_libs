@@ -40,3 +40,4 @@
                     author, category,  comments,
                     enclosure, guid, pub_date,  source}).
 
+-record(rsscategory, { domain="", value}).

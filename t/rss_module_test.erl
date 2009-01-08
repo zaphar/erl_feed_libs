@@ -8,7 +8,7 @@
 -include("rss.hrl").
 
 start() ->
-    plan(17),
+    plan(18),
     loaded_ok(rss, "the rss module has loaded ok"),
     can_ok(rss, process_rss, 1),
     can_ok(rss, process_rss, 2),
@@ -39,7 +39,23 @@ test_items_optional(2) ->
     etap:diag("Testing items with Optional elements"),
     I = rss:process_rss(rss_fixture(2), items),
     ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
-            is_list(Item#rssitem.category) end,
+                Category = Item#rssitem.category,
+                lists:any(fun(Cat) when is_record(Cat, rsscategory) ->
+                        Cat#rsscategory.value == "baz"
+                        andalso Cat#rsscategory.domain == ""
+                    end,
+                 Category)
+            end,
+         I),
+         "The vanilla category was there"),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+                Category = Item#rssitem.category,
+                lists:any(fun(Cat) when is_record(Cat, rsscategory) ->
+                        Cat#rsscategory.value == "foobar"
+                        andalso Cat#rsscategory.domain == "bar.com"
+                    end,
+                 Category)
+            end,
          I),
         "The category field is populated"),
     ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
@@ -58,4 +74,3 @@ rss_fixture(Vsn) ->
     end,
     Result.
             
-
