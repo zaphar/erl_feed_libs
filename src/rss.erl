@@ -6,18 +6,25 @@
 -import(xmerl_xpath).
 
 -include_lib("xmerl/include/xmerl.hrl").
-
 -include("rss.hrl").
+%% @headerfile "../include/rss.hrl" 
 
 -export([process_rss/1, process_rss/2]).
 
 %% @doc parse out an rss feed
 %% @spec process_rss(S) -> [I]
 %%  S = list() | binary()
-%%  I = rssitem()
+%%  I = [channel()]
 process_rss(S) when is_list(S) ->
     process_rss(S, channels).
 
+%% @doc parse out an rss feed.
+%% You can request either a list of the channels in an rss document,
+%% or you can request a list of all the items in an rss document
+%% @spec process_rss(S, Type) -> [I]
+%%  S = list() | binary()
+%%  Type = channels | items
+%%  I = rssitem() | channel()
 process_rss(S, Type) when is_binary(S) ->
     process_rss(binary_to_list(S), Type);
 process_rss(S, channels) when is_list(S) ->

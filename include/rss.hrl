@@ -15,7 +15,7 @@
 %%              pub_date=string(), enclosure=Enclosure, comments=string(),
 %%              category=Category, guid=Guid, source=Source}
 %%  Enclosure = rss_enclosure()
-%%  Category = rss_cat()
+%%  Category = [rss_cat()]
 %%  Guid = rss_guid().
 
 %% @type rss_enclosure() = #rssenclosure{url=string(), length=string(), type=string()}.
