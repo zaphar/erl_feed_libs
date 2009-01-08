@@ -1,3 +1,9 @@
+%% @doc RSS (Really Simple Syndication) parsing library for erlang.
+%%  This library does not parse RDF which is sometimes mistaken for RSS.<br />
+%%  <br /> 
+%%  To get the record specifications include the include/rss.hrl header
+%%  file in your code.
+%% @author "Jeremy (Zaphar) Wall <jeremy@marzhillstudios.com>"
 -module(rss).
 -author("Jeremy (Zaphar) Wall <jeremy@marzhillstudios.com>").
 
