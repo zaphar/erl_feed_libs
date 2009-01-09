@@ -41,3 +41,7 @@
                     enclosure, guid, pub_date,  source}).
 
 -record(rsscategory, { domain="", value}).
+
+-record(rssenclosure, {url, length, type}).
+
+-record(rsssource, {url, value}).

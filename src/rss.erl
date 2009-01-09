@@ -62,32 +62,51 @@ parse_rss_item(I) when is_record(I, xmlElement) ->
   Guid = xpath_text_content("//guid", I),
   Author = xpath_text_content("//author", I),
   Category = xpath_content_list("//category", I),
- 
+  Comments = xpath_text_content("//comments", I),
+  Enclosure = xpath_content_list("//enclosure", I),
+  Source = xpath_content_list("//source", I),
   %% fun to turn xmlElments into category records
   ToCatRecord = fun(C) ->
     Value = text_content(C#xmlElement.content),
     Attrs = C#xmlElement.attributes,
-    Domains = lists:filter(
-        fun(A) ->
-            %%io:format("Attribute name is ~w~n", [A#xmlAttribute.name]),
-            A#xmlAttribute.name == domain 
-         end,
-    Attrs),
-    Domain = case Domains of
-        [] ->
-            "";
-        [H | _] ->
-            H#xmlAttribute.value
-    end,
-    %%io:format("Domain is ~w~n", [Domain]),
+    Domain = get_attribute(Attrs, domain),
     #rsscategory{value=Value, domain=Domain}
   end,
   
+  ToEnclosureRecord = fun(E) ->
+    Attrs = E#xmlElement.attributes,
+    Url = get_attribute(Attrs, url), 
+    Length = get_attribute(Attrs, length), 
+    Type = get_attribute(Attrs, type),
+    #rssenclosure{url=Url, length=Length, type=Type}
+  end,
+  
+  ToSourceRecord = fun(S) ->
+    Value = text_content(S#xmlElement.content),
+    Attrs = S#xmlElement.attributes,
+    Url = get_attribute(Attrs, url),
+    #rsssource{value=Value, url=Url}
+  end,
+
   CatList = [ToCatRecord(C) || C <- Category ],
+
+  ToRecord = fun(Fun, Default, List) ->
+    case [Fun(E) || E <- List] of
+      [] ->
+          Default;
+      [H | _] ->
+          H
+    end
+  end,
+  
+  EnclosureRecord = ToRecord(ToEnclosureRecord, #rssenclosure{}, Enclosure), 
+ 
+  SourceRecord = ToRecord(ToSourceRecord, #rsssource{}, Source), 
 
   #rssitem{uri=Link, title=Title, desc=Desc, author=Author,
            pub_date=Date, guid=Guid,
-           category=CatList}.
+           category=CatList, comments=Comments,
+           enclosure=EnclosureRecord, source=SourceRecord}.
 
 %% @private
 xpath_first_item(Str, R) when is_record(R, xmlElement) ->
@@ -118,6 +137,20 @@ xpath_content_list(Str, R) when is_record(R, xmlElement) ->
         [] ->
             [#xmlElement{}]
     end.
+
+%% @private
+get_attribute(List, Name) when is_list(List), is_atom(Name) ->
+        Attributes = lists:filter(
+            fun(A) ->
+                A#xmlAttribute.name == Name 
+             end,
+        List),
+        case Attributes of
+            [] ->
+                "";
+            [H | _] ->
+                H#xmlAttribute.value
+        end.
 
 %% @private
 xml_doc(S) when is_list(S) ->

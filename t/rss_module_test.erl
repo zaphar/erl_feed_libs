@@ -8,7 +8,7 @@
 -include("rss.hrl").
 
 start() ->
-    plan(18),
+    plan(21),
     loaded_ok(rss, "the rss module has loaded ok"),
     can_ok(rss, process_rss, 1),
     can_ok(rss, process_rss, 2),
@@ -59,9 +59,28 @@ test_items_optional(2) ->
          I),
         "The category field is populated"),
     ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+                Enc = Item#rssitem.enclosure,
+                Enc#rssenclosure.length == "123456"
+                andalso Enc#rssenclosure.type == "video/avi"
+                andalso Enc#rssenclosure.url == "http://liftoff.msfc.nasa.gov/vid.avi"
+            end,
+         I),
+        "The enclosure field is populated"),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+                Src = Item#rssitem.source,
+                Src#rsssource.url == "bar/foo/baz"
+                andalso Src#rsssource.value == "foobarbaz"
+            end,
+         I),
+        "The source field is populated"),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
             Item#rssitem.author == "foo@bar.com" end,
          I),
-        "We had a foo@bar.com author").
+        "We had a foo@bar.com author"),
+    ok(lists:any(fun(Item) when is_record(Item, rssitem) ->
+            Item#rssitem.comments == "http://commentsurl.msfc.nasa.gov/foo/bar" end,
+         I),
+        "We had a foo/bar comments url").
 
 rss_fixture(Vsn) ->
     case Vsn of
@@ -73,4 +92,4 @@ rss_fixture(Vsn) ->
             {ok, Result} = file:read_file("../priv/sample-rss-091.xml")
     end,
     Result.
-            
+
