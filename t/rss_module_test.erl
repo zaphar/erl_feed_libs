@@ -8,7 +8,7 @@
 -include("rss.hrl").
 
 start() ->
-    plan(20),
+    plan(21),
     loaded_ok(rss, "the rss module has loaded ok"),
     can_ok(rss, process_rss, 1),
     can_ok(rss, process_rss, 2),
